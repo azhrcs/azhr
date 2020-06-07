@@ -1,3 +1,4 @@
+// Get some variables set up in millimeters for common US wood sizes
 X2 = 38
 X4 = 89
 ft = 304.8
@@ -7,6 +8,7 @@ width = 3.5 * ft
 height = 2.667 * ft
 depth = 2 * ft
 
+function main () {
 // First we make the box at the bottom
 // Frontbar
 frontbar = cube({
@@ -20,9 +22,12 @@ frontbar = translate([
 ], frontbar)
 // Sidebars
 
+left = cube({
+    size: [X2, X4, depth - (X2 * 2)],
+})
 
-function main () {
   return union(
-    frontbar
+    frontbar, left
   ).translate([0, 0, 0]).scale(0.05)
 }
+
