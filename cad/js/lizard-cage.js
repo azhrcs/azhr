@@ -4,8 +4,13 @@ ft = 304.8
 inch = ft / 12
 
 width = 3.5 * ft
-height = 2.667 * ft
 depth = 2 * ft
+
+plat_height = 2*X2 + 0.5*inch
+cage_height = 16 * inch
+
+height = 2.5 * ft
+// height = plat_height + cage_height
 
 function main () {
 
@@ -50,32 +55,34 @@ platf = cube({
 platf = platf.setColor([1, 0.25, 0.3, 0.95])
 platf = translate([-width/2, -depth + X2, 2*X2], platf)
 
+// Main Cage
 cagefb = cube({
   size: [width - 2*X2, X2, X2]
 })
-cagefb = translate([-width/2 + X2, 0, 0.5 *inch + 2*X2], cagefb)
+cagefb = translate([-width/2 + X2, 0, plat_height], cagefb)
 cagebb = cube()
 Object.assign(cagebb, cagefb)
 cagebb = translate([0, -depth+X2, 0], cagebb)
 cageft = cube()
 Object.assign(cageft, cagefb)
-cageft = translate([0, 0, 8 *inch - X2], cageft)
+cageft = translate([0, 0, cage_height - X2], cageft)
 cagebt = cube()
 Object.assign(cagebt, cagefb)
-cagebt = translate([0, -depth + X2, 8 *inch - X2], cagebt)
+cagebt = translate([0, -depth + X2, cage_height - X2], cagebt)
 
-wallfl = cube({size: [X2, X2, 8 * inch ]})
+wallfl = cube({size: [X2, X2, cage_height ]})
 wallfl = translate([width/2 - X2, 0, 2*X2 + 0.5 * inch], wallfl)
 wallfr = cube()
 Object.assign(wallfr, wallfl)
 wallfr = translate([-width + X2, 0, 0], wallfr)
 
-wallbl = cube()
-Object.assign(wallbl, wallfl)
-wallbl = translate([0, -depth + X2, 0], wallbl)
+wallbl = cube({
+    size: [X2, X2, height - plat_height]
+})
+wallbl = translate([width/2 - X2, -depth + X2, plat_height], wallbl)
 wallbr = cube()
-Object.assign(wallbr, wallfl)
-wallbr = translate([-width + X2, -depth + X2, 0], wallbr)
+Object.assign(wallbr, wallbl)
+wallbr = translate([-width + X2, 0, 0], wallbr)
 
 
 cagebl = cube({
@@ -91,11 +98,40 @@ cagebr = translate([
 ], cagebr)
 cagetl = cube()
 Object.assign(cagetl, cagebl)
-cagetl = translate([0,0, 8* inch - X2], cagetl)
+cagetl = translate([0,0, cage_height - X2], cagetl)
 cagetr = cube()
 Object.assign(cagetr, cagetl)
 cagetr = translate([-width+X2, 0, 0], cagetr)
 
+
+// topcage_wall_left = cube({
+//     size: [X2, X2, height - plat_height]
+// })
+// topcage_wall_left = translate([
+//     width/2 - X2, -depth /2, plat_height
+// ], topcage_wall_left)
+// topcage_wall_right = topcage_wall_left.translate([-width + X2, 0, 0])
+
+h = height - cage_height - plat_height
+l = Math.sqrt(h**2 + depth**2)
+
+slant_left = cube({
+    size: [X2, X2, l-X2]
+})
+slant_left = rotate([65, 0, 0], slant_left)
+slant_left = translate([
+    width/2 - X2, 0, cage_height + plat_height - X2],
+slant_left)
+
+slant_right = slant_left.translate([-width + X2, 0, 0])
+
+
+
+back_top_bar = cube()
+Object.assign(back_top_bar, cagebt)
+back_top_bar = translate([0, 0, h], back_top_bar)
+
+console.log(h / inch)
 
 return union(
 frontbar, rearbar, left, right,
@@ -103,6 +139,9 @@ ffl, ffr, bfl, bfr,
 platf,
 cagefb, cagebb, cageft, cagebt,
 wallfl, wallfr, wallbr, wallbl,
-cagebl, cagebr, cagetl, cagetr
+cagebl, cagebr, cagetl, cagetr,
+slant_left, slant_right,
+back_top_bar
+// topcage_wall_left, topcage_wall_right
 ).translate([0, 0, 0]).scale(0.05)
 }
