@@ -9,3 +9,4 @@ def index(request):
     return HttpResponse(
         "hello, world. you're at the polls index"
     )
+ def detail(request, question)
